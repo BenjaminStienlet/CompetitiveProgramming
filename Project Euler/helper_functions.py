@@ -80,6 +80,46 @@ class HelperFunctions():
     #===================================================================================================================
 
     @staticmethod
+    def factorization(n):
+        """
+        Decomposes the given number in prime factors.
+        """
+        if n == 1:
+            return [1]
+
+        root = int(math.ceil(math.sqrt(n)))
+        primes = HelperFunctions.prime(root)
+        factors = []
+        number = n
+
+        for prime in primes:
+            if number == 1:
+                break
+            if number % prime == 0:
+                number /= prime
+                count = 1
+                while number % prime == 0:
+                    number /= prime
+                    count += 1
+                factors.append((prime, count))
+
+        if number != 1:
+            factors.append((number, 1))
+
+        return factors
+
+
+    @staticmethod
+    def is_prime(n):
+        """
+        Checks whether the given number is a prime.
+        """
+        for i in range(2, int(math.ceil(math.sqrt(n)))+1):
+            if n % i == 0:
+                return False
+        return True
+
+    @staticmethod
     def prime(limit):
         """
         Generate prime numbers up to the given limit.
@@ -87,6 +127,10 @@ class HelperFunctions():
         """
         if limit < 2:
             return []
+        if limit == 2:
+            return [2]
+        if limit == 3:
+            return [2, 3]
 
         # Initialise the sieve
         sieve = [False]*(limit+1)
@@ -120,12 +164,17 @@ class HelperFunctions():
         return [2, 3, 5] + [x for x in range(7, len(sieve)) if sieve[x]]
 
     @staticmethod
-    def is_prime(n):
+    def mersenne_prime(limit):
         """
-        Checks whether the given number is a prime.
+        Generates the Mersenne primes up to the given limit.
         """
-        for i in range(math.sqrt(n)):
-            if n % i == 0:
-                return False
-        return True
+        limit = int(math.ceil(math.log(limit, 2)))
+        primes = []
 
+        for i in HelperFunctions.prime(limit):
+            x = 2**i-1
+            if HelperFunctions.is_prime(x):
+                print x
+                primes.append(x)
+
+        return primes
