@@ -108,7 +108,6 @@ class HelperFunctions():
 
         return factors
 
-
     @staticmethod
     def is_prime(n):
         """
