@@ -1,12 +1,11 @@
 """
-10001st prime
+Summation of primes
 ========================================================================================================================
-By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.
-What is the 10 001st prime number?s
+The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
+Find the sum of all the primes below two million.
 ========================================================================================================================
 """
 
 from helper_functions import HelperFunctions as Hf
 
-primes = Hf.prime(2**20)
-print primes[10000]
+print sum(Hf.prime(2000000))
