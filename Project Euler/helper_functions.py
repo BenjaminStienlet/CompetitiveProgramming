@@ -1,4 +1,5 @@
 import math
+import itertools
 
 
 class HelperFunctions():
@@ -107,6 +108,38 @@ class HelperFunctions():
             factors.append((number, 1))
 
         return factors
+
+    @staticmethod
+    def divisors(n):
+        """
+        Returns all the divisors of the given number.
+        """
+        primes = []
+        for (a, b) in HelperFunctions.factorization(n):
+            for _ in range(0, b):
+                primes.append(a)
+        factors = []
+
+        for i in range(0, len(primes)+1):
+            for j in itertools.combinations(primes, i):
+                product = reduce(lambda x, y: x*y, j, 1)
+                if not product in factors:
+                    factors.append(product)
+
+        return sorted(factors)
+
+    @staticmethod
+    def number_of_divisors(n):
+        """
+        Returns the number of divisors of the given number.
+        """
+        if n == 0:
+            return 0
+        divisors = 1
+        for (a, b) in HelperFunctions.factorization(n):
+            divisors *= b+1
+
+        return divisors
 
     @staticmethod
     def is_prime(n):
