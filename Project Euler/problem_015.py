@@ -11,9 +11,11 @@ How many such routes are there through a 20x20 grid?
 import math
 
 n = 20
-s = 0
-for i in range(1, n+1):
-    s += math.factorial(i)
-s *= 2
 
-print s
+f1 = 1
+f2 = 1
+for i in range(1, n+1):
+    f1 *= i
+    f2 *= (n+i)
+
+print f2 / f1
