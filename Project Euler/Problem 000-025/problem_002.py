@@ -9,7 +9,7 @@ find the sum of the even-valued terms.
 ========================================================================================================================
 """
 
-from helper_functions import HelperFunctions as Hf
+from ..helper_functions import HelperFunctions as Hf
 
 sum_fib = 0
 x = 0

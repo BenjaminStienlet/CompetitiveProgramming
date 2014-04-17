@@ -1,11 +1,14 @@
 """
-Summation of primes
+Power digit sum
 ========================================================================================================================
-The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
-Find the sum of all the primes below two million.
+2^15 = 32768 and the sum of its digits is 3 + 2 + 7 + 6 + 8 = 26.
+
+What is the sum of the digits of the number 2^1000?
 ========================================================================================================================
 """
 
-from helper_functions import HelperFunctions as Hf
-
-print sum(Hf.prime(2000000))
+p = 2**1000
+s = 0
+for i in str(p):
+    s += int(i)
+print s

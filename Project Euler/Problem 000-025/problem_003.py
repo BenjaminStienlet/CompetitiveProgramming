@@ -1,12 +1,11 @@
 """
-10001st prime
+Largest prime factor
 ========================================================================================================================
-By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.
-What is the 10 001st prime number?s
+The prime factors of 13195 are 5, 7, 13 and 29.
+What is the largest prime factor of the number 600851475143 ?
 ========================================================================================================================
 """
 
-from helper_functions import HelperFunctions as Hf
+from ..helper_functions import HelperFunctions as Hf
 
-primes = Hf.prime(2**20)
-print primes[10000]
+print Hf.factorization(600851475143)[-1][0]

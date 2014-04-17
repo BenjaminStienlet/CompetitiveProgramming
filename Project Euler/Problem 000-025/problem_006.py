@@ -14,10 +14,10 @@ Solution:
 """
 
 numbers = range(1, 101)
-sum = 0
+s = 0
 
 for i in range(0, len(numbers)):
     for j in range(i+1, len(numbers)):
-        sum += numbers[i]*numbers[j]
+        s += numbers[i]*numbers[j]
 
-print 2*sum
+print 2*s

@@ -20,17 +20,17 @@ What is the value of the first triangle number to have over five hundred divisor
 """
 from time import clock
 
-from helper_functions import HelperFunctions as Hf
+from ..helper_functions import HelperFunctions as Hf
 
 clock()
 i = 1
-sum = i
+s = i
 while True:
     i += 1
-    sum += i
-    print sum
-    if Hf.number_of_divisors(sum) >= 500:
+    s += i
+    print s
+    if Hf.number_of_divisors(s) >= 500:
         break
 
-print sum
+print s
 print clock()
