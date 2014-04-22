@@ -3,7 +3,7 @@ from time import clock
 
 clock()
 
-number = 2147483648
+number = 8192
 result = Hf.divisors(number)
 
 print str(clock()) + ", " + str(number)
