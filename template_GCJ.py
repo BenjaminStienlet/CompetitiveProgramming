@@ -18,5 +18,5 @@ def output():
 
 
 C = int(read_line())
-for c in range(0, C):
+for c in range(C):
     write_line("Case #%s: %s" % (c+1, output()))
