@@ -1,4 +1,4 @@
-__author__ = 'Benjamin Stienlet'
+__author__ = 'Benjamin S.'
 
 
 fi = open('input.txt', 'r')
