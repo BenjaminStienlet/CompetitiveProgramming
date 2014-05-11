@@ -1,3 +1,5 @@
+import math
+
 __author__ = 'Benjamin S.'
 
 
@@ -10,11 +12,26 @@ def read_line():
 
 
 def write_line(line):
+    print line
     fo.write(line + "\n")
 
 
 def output():
-    return None
+    inp = map(float, read_line().split("/"))
+    p = inp[0]
+    q = inp[1]
+
+    if (q % 2) != 0:
+        return "impossible"
+
+    gen = int(math.ceil(math.log(q, 2)))
+
+    for i in range(gen):
+        p *= 2
+        if p >= q:
+            return i+1
+
+    return "impossible"
 
 
 C = int(read_line())

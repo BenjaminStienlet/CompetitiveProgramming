@@ -14,6 +14,13 @@ def write_line(line):
 
 
 def output():
+    inp = map(int, read_line().split(' '))
+    n = inp[0]
+    m = inp[0]
+    k = inp[0]
+
+
+
     return None
 
 
