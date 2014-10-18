@@ -20,7 +20,7 @@ What is the value of the first triangle number to have over five hundred divisor
 """
 from time import clock
 
-from ..helper_functions import HelperFunctions as Hf
+from ProjectEuler.helper_functions import HelperFunctions as Hf
 
 clock()
 i = 1

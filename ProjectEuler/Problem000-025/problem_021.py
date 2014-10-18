@@ -12,15 +12,21 @@ Evaluate the sum of all the amicable numbers under 10000.
 ========================================================================================================================
 """
 
-from ..helper_functions import HelperFunctions as Hf
+from ProjectEuler.helper_functions import HelperFunctions as Hf
 
 d = {}
-s = 0
-
 for n in range(1, 10000):
-    d[n] = sum(Hf.divisors(n))
-    o = d[d[n]]
-    if o == n and n != d[n]:
-        sum += o + n
+    divisors = Hf.divisors(n)
+    divisors.remove(n)
+    d[n] = sum(divisors)
 
-print s
+s = 0
+for n in range(1, 10000):
+    a = n
+    b = d[n]
+    if b in d:
+        a2 = d[b]
+        if a2 == a and a != b:
+            s += a2 + a
+
+print s/2

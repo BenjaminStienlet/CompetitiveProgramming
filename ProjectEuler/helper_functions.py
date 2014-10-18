@@ -86,7 +86,7 @@ class HelperFunctions():
         Decomposes the given number in prime factors.
         """
         if n == 1:
-            return [1]
+            return [(1, 1)]
 
         root = int(math.ceil(math.sqrt(n)))
         primes = HelperFunctions.prime(root)
@@ -118,8 +118,8 @@ class HelperFunctions():
         for (a, b) in HelperFunctions.factorization(n):
             for _ in range(0, b):
                 primes.append(a)
-        factors = []
 
+        factors = []
         for i in range(0, len(primes)+1):
             for j in itertools.combinations(primes, i):
                 product = reduce(lambda x, y: x*y, j, 1)
