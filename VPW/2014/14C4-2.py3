@@ -34,6 +34,7 @@ for i in range(n):
     seq = {i: [] for i in range(n_verdiep)}
 
     queue = [(bv, 0)]
+    # not needed, there is no significant improvement when using seen
     seen = [(bv, 0)]
 
     while len(queue) > 0:
