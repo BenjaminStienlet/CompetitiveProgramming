@@ -60,7 +60,7 @@ for i in range(n):
                                     break
                             if change:
                                 for j in range(len(new_seq)):
-                                    if new_seq[j][1] < seq[verdiep][j][1]:
+                                    if new_seq[j][1] > seq[verdiep][j][1]:
                                         change = False
                                         break
                     elif min_stop[verdiep] > cost:
