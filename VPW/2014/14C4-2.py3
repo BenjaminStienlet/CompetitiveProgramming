@@ -34,6 +34,7 @@ for i in range(n):
     seq = {i: [] for i in range(n_verdiep)}
 
     queue = [(bv, 0)]
+    seen = [(bv, 0)]
 
     while len(queue) > 0:
         # (verdiep, cost)
@@ -78,7 +79,9 @@ for i in range(n):
                     if change:
                         seq[verdiep] = new_seq
                         min_stop[verdiep] = cost
-                        queue.append((verdiep, cost))
+                        if not verdiep in seen:
+                            queue.append((verdiep, cost))
+                            seen.append((verdiep, cost))
 
     s = "%d " % (i+1)
     for el in seq[ev]:
