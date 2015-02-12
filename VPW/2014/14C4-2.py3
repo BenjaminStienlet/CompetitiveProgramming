@@ -1,11 +1,15 @@
 __author__ = 'benjamin'
 
-f = open('14C4-2W.invoer', 'r')
-def read():
-    return f.readline()
-
+# f = open('14C4-2W.invoer', 'r')
 # def read():
-#     return input()
+#     return f.readline()
+
+def read():
+    return input()
+
+# import time
+#
+# t = time.time()
 
 n = int(read())
 
@@ -16,11 +20,13 @@ for i in range(n):
 
     liften = [[] for j in range(n_lift)]
     for j in range(n_lift):
-        liften[j] = list(map(int, read().split()))
+        liften[j] = (j, list(map(int, read().split())))
 
     line = read().split()
     bv = int(line[0])
     ev = int(line[1])
+
+    liften = sorted(liften, key=lambda x: x[1][2], reverse=True)
 
     # minimaal aantal stopplaatsen om van bv naar i te gaan
     min_stop = {i: float("inf") for i in range(n_verdiep)}
@@ -32,7 +38,10 @@ for i in range(n):
     while len(queue) > 0:
         # (verdiep, cost)
         el = queue.pop(0)
-        for lift_nr, lift in enumerate(liften):
+
+        for lift in liften:
+            lift_nr = lift[0]
+            lift = lift[1]
             if lift[0] <= el[0] <= lift[1] and (el[0]-lift[0]) % lift[2] == 0:
                 for verdiep in range(lift[0], lift[1]+1, lift[2]):
                     if verdiep == el[0]:
@@ -60,7 +69,7 @@ for i in range(n):
                                     break
                             if change:
                                 for j in range(len(new_seq)):
-                                    if new_seq[j][1] < seq[verdiep][j][1]:
+                                    if new_seq[j][1] > seq[verdiep][j][1]:
                                         change = False
                                         break
                     elif min_stop[verdiep] > cost:
@@ -75,3 +84,5 @@ for i in range(n):
     for el in seq[ev]:
         s += "(%s,%s)" % (el[0], el[1])
     print(s)
+
+# print("Time elapse: %fs" % (time.time() - t))
