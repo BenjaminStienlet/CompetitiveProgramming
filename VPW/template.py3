@@ -1,3 +1,4 @@
+
 f = open('', 'r')
 def read():
     return f.readline()
