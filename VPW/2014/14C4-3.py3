@@ -1,10 +1,10 @@
 
-f = open('', 'r')
-def read():
-    return f.readline()
-
+# f = open('14C4-3W.invoer', 'r')
 # def read():
-#     return input()
+#     return f.readline()
+
+def read():
+    return input()
 
 def read_line(input_type=int, separator=" "):
     return list(map(input_type, read().split(separator)))
@@ -28,7 +28,7 @@ class PriorityQueue(object):
         # Remove marker: CHANGE this value for the problem!
         # Has to be the same type as values of the priority queue
         #self.REMOVED = '<remove_marker>'
-        self.REMOVED = -1
+        self.REMOVED = (-1, [])
 
     def insert(self, node, priority=0.0):
         """'entry_finder' bookkeeps all valid entries, which are bonded in
@@ -67,45 +67,61 @@ class PriorityQueue(object):
         return self.size == 0
 ###   PRIORITY QUEUE   #########################################################
 
-def get_sequence(item):
-    seq_prev = [item]
-    current = item
-    while prev[current] != source and prev[current] is not None:
-        current = prev[current]
-        seq_prev.insert(0, current)
-    return seq_prev
-
 n = int(read())
 
 for i in range(n):
     # Read input
-    nr = 0  # Number of nodes
-    source = 0   # Source node
+    nr = int(read())  # Number of nodes
+    source = int(read())   # Source node
+    dest = int(read())
+    nr_cultuur = int(read())
+    cultuur = read_line()
+    nr_voetbal = int(read())
+    voetbal = read_line()
+    nr_edges = int(read())
     edges = []
-    nodes = []
+    for j in range(nr_edges):
+        edges.append(read_line())
+    for j in range(1,nr+1):
+        if [j,j] not in edges:
+            edges.append([j,j])
 
-    dist = [float("inf")]*nr
-    prev = [None]*nr
+    cultuur = [source] + cultuur + [dest]
 
     pq = PriorityQueue()
 
-    dist[source] = 0
-    for node in nodes:
-        pq.insert(node, dist[node])
+    pq.insert((source,), 0)
+    solution = None
 
     while not pq.empty():
-        # (priority, node)
-        node = pq.pop()
-
+        cost, seq = pq.pop()
+        node = seq[-1]
+        if len(seq) == len(cultuur):
+            if node == dest and all(map(lambda x: x in seq, voetbal)):
+                solution = len(cultuur) - 2 - cost
+                break
+            else:
+                continue
         for edge in edges:
             # Check if edge contains node (not needed if edge is a dict)
-            if .... :
+            if node in edge:
                 # Neighbour of the node via edge
-                neighbour = ....
-                cost = dist[node] + length(node, neighbour)
-                if cost < dist[neighbour]:
-                    dist[neighbour] = cost
-                    prev[neighbour] = node
-                    pq.insert(neighbour, cost)
+                if node == edge[0]:
+                    neighbour = edge[1]
+                else:
+                    neighbour = edge[0]
+
+                new_seq = seq + (neighbour,)
+                cost = 0
+                for j in range(len(new_seq)):
+                    if new_seq[j] != cultuur[j]:
+                        cost += 1
+                # if neighbour != cultuur[len(seq)]:
+                #     cost += 1
+
+                pq.insert(new_seq, cost)
 
     # Print result
+    if solution is None:
+        solution = "onmogelijk"
+    print("%d %s" % (i+1, str(solution)))
