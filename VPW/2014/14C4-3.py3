@@ -1,27 +1,48 @@
 import heapq
 
-# f = open('14C4-3.invoer', 'r')
-# def read():
-#     return f.readline()
-
+f = open('14C4-3W.invoer', 'r')
 def read():
-    return input()
+    return f.readline()
+#
+# fout = open('14C4-3W.uitvoer', 'r')
+
+# def read():
+#     return input()
 
 def read_line(input_type=int, separator=" "):
     return list(map(input_type, read().strip().split(separator)))
 
-
 n = int(read())
 
 for i in range(n):
+    # nr nodes
     k = int(read())
+    # nr machines
     machines = int(read())
-    installed = []
+    # Machines installed/installing
+    installed = 0
 
-    time = {}
     nodes = [0]*k
+    # node -> time
+    time = {}
+    # node -> [node]
     dep = {}
+    # node -> [node] (inverse dependencies)
     idep = {}
+    # Heap with nodes that aren't waiting for a dependency to be installed
+    no_dep = []
+    heapq.heapify(no_dep)
+    # All nodes that have been added to no_dep
+    dep_nodes = []
+    # Future event list, contains (time, type, info)
+    # type == 0: info = node that is installed
+    # type == 1: info = machine to be scheduled
+    fel = []
+    heapq.heapify(fel)
+    # List of idle machines
+    idle_m = set([])
+    idle = "IDLE"
+
     for j in range(k):
         line = read().split()
         node = line[0]
@@ -29,10 +50,6 @@ for i in range(n):
         time[node] = int(line[1])
         dep[node] = line[2:]
 
-
-    no_dep = []
-    heapq.heapify(no_dep)
-    dep_nodes = []
     for node in nodes:
         if node not in idep:
             idep[node] = []
@@ -45,37 +62,39 @@ for i in range(n):
             else:
                 idep[node2] = [node]
 
-    pq = []
-    heapq.heapify(pq)
-    idle_m = set([])
-    idle = "IDLE"
-
     for m in range(machines):
-        heapq.heappush(pq, (0, m, idle))
+        heapq.heappush(fel, (0, 1, m))
 
     now = 0
-    while len(pq) > 0:
-        now, m, node = heapq.heappop(pq)
-        if len(installed) < k:
-            if node is not idle:
-                for node2 in idep[node]:
-                    dep[node2].remove(node)
-                    if len(dep[node2]) == 0:
-                        if node2 not in dep_nodes:
-                            dep_nodes.append(node2)
-                            heapq.heappush(no_dep, node2)
-                        while len(idle_m) > 0:
-                            mach = idle_m.pop()
-                            heapq.heappush(pq, (now, mach, idle))
+    while len(fel) > 0:
+        now, event_type, info = heapq.heappop(fel)
+        if event_type == 0:
+            # remove node from the dependency-lists
+            # add the nodes which have an empty dep list
+            for node in idep[info]:
+                dep[node].remove(info)
+                if len(dep[node]) == 0:
+                    if node not in dep_nodes:
+                        dep_nodes.append(node)
+                        heapq.heappush(no_dep, node)
+                    while len(idle_m) > 0:
+                        mach = idle_m.pop()
+                        heapq.heappush(fel, (now, 1, mach))
+        elif event_type == 1 and installed < k:
             if len(no_dep) > 0:
-                node2 = heapq.heappop(no_dep)
-                installed.append(node2)
-                # print(len(installed), k, node2, no_dep, dep_nodes)
-                heapq.heappush(pq, (now+time[node2], m, node2))
+                node = heapq.heappop(no_dep)
+                installed += 1
+                # print(installed, k, node, now, now+time[node], no_dep)
+                heapq.heappush(fel, (now+time[node], 0, node))
+                heapq.heappush(fel, (now+time[node], 1, info))
             else:
-                # heapq.heappush(pq, (now+1,m,None))
-                idle_m.add(m)
+                # heapq.heappush(fel, (now+1, m, idle))
+                idle_m.add(info)
 
     print("%d %d" % (i+1, now))
+
+    # result = int(fout.readline().split()[1])
+    # if result != now:
+    #     print(i+1, result, now)
 
 
