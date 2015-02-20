@@ -11,7 +11,7 @@ def read_line(input_type=int, separator=" "):
 
 
 def find_coalitions(list_scores, list_coalition, total_score):
-    global memo, target_score
+    global target_score
     if len(list_scores) == 0:
         if total_score < target_score:
             return [None], float("inf")
@@ -48,8 +48,6 @@ for i in range(n):
         total += int(line[1])
 
     target_score = int(total / 2) + 1
-
-    memo = {}
 
     result = city.strip()
     coalitions = find_coalitions(scores, [], 0)[0]
