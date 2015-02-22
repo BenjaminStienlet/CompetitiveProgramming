@@ -68,7 +68,7 @@ class PriorityQueue(object):
 ###   PRIORITY QUEUE   #########################################################
 
 def get_sequence(row, col):
-    seq_prev = [row, col]
+    seq_prev = [(row, col)]
     cr = row
     cc = col
     while prev[cr][cc] is not None:
@@ -97,12 +97,28 @@ for i in range(n):
             pq.insert((r, c), dist[r][c])
 
     result = (-1, -1)
+    min_cost = float("inf")
+    min_length = float("inf")
+    reached_target = False
     while not pq.empty():
         # (priority, node)
-        _, (r, c) = pq.pop()
+        cost, (r, c) = pq.pop()
+        if reached_target:
+            if cost > min_cost:
+                break
+            if c != c-1:
+                continue
+            length = len(get_sequence(r, c))
+            if length < min_length:
+                result = (r, c)
+                min_length = length
+            continue
         if c == cols-1:
+            reached_target = True
             result = (r, c)
-            break
+            min_cost = cost
+            min_length = len(get_sequence(r, c))
+            continue
 
         neighbours = []
         if r > 0:
@@ -123,10 +139,10 @@ for i in range(n):
                 prev[rn][cn] = (r, c)
                 pq.insert((rn, cn), cost)
             if cost == dist[rn][cn]:
-                if len(get_sequence(r, c)) > len(get_sequence(rn, cn)):
+                if len(get_sequence(r, c)) + 1 < len(get_sequence(rn, cn)):
                     dist[rn][cn] = cost
                     prev[rn][cn] = (r, c)
                     pq.insert((rn, cn), cost)
 
     # Print result
-    print("%d %d %d" % (i+1, len(get_sequence(result[0], result[1]))-1, dist[result[0]][result[1]]))
+    print("%d %d %d" % (i+1, min_length, min_cost))
