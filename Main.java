@@ -12,12 +12,16 @@ public class Main {
     public Main() throws IOException {
         Scanner sc = new Scanner(System.in);
         BufferedWriter out = new BufferedWriter(new FileWriter("output.txt"));
-        int n = sc.nextInt();
-        for (int i = 1; i <= n; i++) {
-            
+        int test_cases = sc.nextInt();
+        for (int test_case = 1; test_case <= test_cases; test_case++) {
+            out.write("Case #" + test_case + ": " + getResult() + "\n");
         }
         out.flush();
         out.close();
         sc.close();
+    }
+
+    public String getResult() {
+        return Null;
     }
 }
