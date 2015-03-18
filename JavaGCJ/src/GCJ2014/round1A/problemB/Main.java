@@ -1,3 +1,5 @@
+package GCJ2014.round1A.problemB;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,6 +24,6 @@ public class Main {
     }
 
     public String getResult() {
-        return Null;
+        return null;
     }
 }
