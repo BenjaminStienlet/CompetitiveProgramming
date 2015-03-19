@@ -21,7 +21,7 @@ public class Main {
         sc.close();
     }
 
-    public String getResult() {
+    private String getResult() {
         return null;
     }
 }
