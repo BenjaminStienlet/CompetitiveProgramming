@@ -13,8 +13,6 @@ public class Main {
 
     int n;
     BitSet[] edges;
-    int[] children;
-    BitSet visited;
 
     HashMap<List<Integer>, Integer> map;
 
@@ -48,44 +46,41 @@ public class Main {
     }
 
     private String getResult() {
-        int max = 0;
+        int min = Integer.MAX_VALUE;
+        int children;
         for (int i = 0; i < n; i++) {
 //            System.out.println("==========\nRoot " + i);
-            children = new int[n];
-            visited = new BitSet(n);
-            setChildren(i);
-            if (children[i] > max) {
-                max = children[i];
+            children = getChildren(i, -1);
+            if (n-children < min) {
+                min = n-children;
             }
         }
-        return "" + (n - max - 1);
+        return "" + min;
     }
 
-    private void setChildren(int node) {
-        visited.set(node);
-
+    private int getChildren(int node, int parent) {
         ArrayList<Integer> list = new ArrayList<Integer>();
         for (int j=0; j < n; j++) {
-            if (edges[node].get(j) && !visited.get(j)) {
+            if (edges[node].get(j) && j != parent) {
                 list.add(j);
             }
         }
 
         if (list.size() < 2) {
-            children[node] = 0;
 //            System.out.println("Remove "+node);
-            return ;
+            return 1;
         }
 
         int max1 = 0, max2 = 0;
+        int children;
         for (Integer child : list) {
-            setChildren(child);
-            if (children[child] > max1) {
-                max1 = children[child];
-            } else if (children[child] > max2) {
-                max2 = children[child];
+            children = getChildren(child, node);
+            if (max1 <= max2 && children > max1) {
+                max1 = children;
+            } else if (max1 > max2 && children > max2) {
+                max2 = children;
             }
         }
-        children[node] = max1 + max2 + 2;
+        return max1 + max2 + 1;
     }
 }
