@@ -16,7 +16,13 @@ public class Main {
     int[] children;
     BitSet visited;
 
+    HashMap<List<Integer>, Integer> map;
+
     public Main() throws IOException {
+        solve();
+    }
+
+    private void solve() throws IOException{
         Scanner sc = new Scanner(System.in);
         BufferedWriter out = new BufferedWriter(new FileWriter("output.txt"));
         int test_cases = sc.nextInt();
@@ -58,22 +64,22 @@ public class Main {
     private void setChildren(int node) {
         visited.set(node);
 
-        if (edges[node].cardinality() < 2) {
-            children[node] = 0;
-//            System.out.println("Remove "+node);
-            return ;
-        }
-        
         ArrayList<Integer> list = new ArrayList<Integer>();
         for (int j=0; j < n; j++) {
             if (edges[node].get(j) && !visited.get(j)) {
-                setChildren(j);
                 list.add(j);
             }
         }
 
+        if (list.size() < 2) {
+            children[node] = 0;
+//            System.out.println("Remove "+node);
+            return ;
+        }
+
         int max1 = 0, max2 = 0;
         for (Integer child : list) {
+            setChildren(child);
             if (children[child] > max1) {
                 max1 = children[child];
             } else if (children[child] > max2) {
