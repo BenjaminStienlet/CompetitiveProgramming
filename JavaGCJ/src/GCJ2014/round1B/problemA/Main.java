@@ -19,10 +19,16 @@ public class Main {
         BufferedWriter out = new BufferedWriter(new FileWriter("output.txt"));
 
         int test_cases = sc.nextInt();
-
+        int n;
+        String[] array;
         for (int test_case = 1; test_case <= test_cases; test_case++) {
+            n = sc.nextInt();
+            array = new String[n];
+            for (int i = 0; i < n; i++) {
+                array[i] = sc.next();
+            }
             System.out.println("Solving " + test_case);
-            out.write("Case #" + test_case + ": " + getResult() + "\n");
+            out.write("Case #" + test_case + ": " + getResult(array) + "\n");
         }
 
         out.flush();
@@ -30,7 +36,9 @@ public class Main {
         sc.close();
     }
 
-    private String getResult() {
+    private String getResult(String[] array) {
         return null;
     }
+
+
 }
