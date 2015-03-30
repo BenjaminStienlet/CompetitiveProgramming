@@ -1,19 +1,20 @@
+package template;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         new Main();
     }
 
-    public Main() throws IOException {
+    public Main() throws Exception {
         solve();
     }
 
-    private String solve() {
+    private void solve() throws Exception {
         System.out.println(">>> Input: ");
         Scanner sc = new Scanner(System.in);
         BufferedWriter out = new BufferedWriter(new FileWriter("output.txt"));

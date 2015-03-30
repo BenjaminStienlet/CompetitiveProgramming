@@ -1,3 +1,5 @@
+package GCJ2014.round1B.problemB;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,7 +15,7 @@ public class Main {
         solve();
     }
 
-    private String solve() {
+    private void solve() throws IOException {
         System.out.println(">>> Input: ");
         Scanner sc = new Scanner(System.in);
         BufferedWriter out = new BufferedWriter(new FileWriter("output.txt"));
