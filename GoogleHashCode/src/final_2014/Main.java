@@ -54,9 +54,9 @@ public class Main {
         solution = new int[nrTurns][nrBalloons];
 
         // Add startCell to balloon positions at turn -1
-        balloonPosition = new HashMap<>();
+        balloonPosition = new HashMap<Pair<Integer, Integer>, Integer[]>();
         for (int i = 0; i < nrBalloons; i++) {
-            balloonPosition.put(new Pair<>(i, -1), new Integer[]{0, startCell[0], startCell[1]});
+            balloonPosition.put(new Pair<Integer, Integer>(i, -1), new Integer[]{0, startCell[0], startCell[1]});
         }
 
         // Create an bitset with nrTargets zeroes for every turn
@@ -116,7 +116,7 @@ public class Main {
     // 5 : 116197, 130s
     // 6 : 434405, 389s
     // 7 : 75115, 1152s
-    int maxDepth = 7;
+    int maxDepth = 3;
 
     Integer[] outsideField = new Integer[]{-1, -1, -1};
 
@@ -138,10 +138,10 @@ public class Main {
 
             for (int turn = 0; turn < nrTurns; turn++) {
 
-                position = balloonPosition.get(new Pair<>(balloon, turn-1));
+                position = balloonPosition.get(new Pair<Integer, Integer>(balloon, turn-1));
 
                 if (Arrays.equals(position, outsideField)) {
-                    balloonPosition.put(new Pair<>(balloon, turn), outsideField);
+                    balloonPosition.put(new Pair<Integer, Integer>(balloon, turn), outsideField);
                     solution[turn][balloon] = 0;
                     continue;
                 }
@@ -151,21 +151,21 @@ public class Main {
                 if (newPosition == null)
                     score_min1 = Integer.MIN_VALUE;
                 else
-                    score_min1 = dfs(turn, position[0] - 1, newPosition[1], newPosition[2], liftOff, 0);
+                    score_min1 = dfs(turn, newPosition[0], newPosition[1], newPosition[2], liftOff, 0);
 
                 // 0
                 newPosition = nextPosition(position[0], position[1], position[2]);
                 if (newPosition == null)
                     score_0 = Integer.MIN_VALUE;
                 else
-                    score_0 = dfs(turn, position[0], newPosition[1], newPosition[2], liftOff, 0);
+                    score_0 = dfs(turn, newPosition[0], newPosition[1], newPosition[2], liftOff, 0);
 
                 // +1
                 newPosition = nextPosition(position[0] + 1, position[1], position[2]);
                 if (newPosition == null)
                     score_plus1 = Integer.MIN_VALUE;
                 else
-                    score_plus1 = dfs(turn, position[0] + 1, newPosition[1], newPosition[2], liftOff, 0);
+                    score_plus1 = dfs(turn, newPosition[0], newPosition[1], newPosition[2], liftOff, 0);
 
                 // Pick the one with the highest score
                 if (score_0 >= score_min1 && score_0 >= score_plus1) {
@@ -184,10 +184,11 @@ public class Main {
 
                 // Set the balloon position
                 if (newPosition == null) {
-                    balloonPosition.put(new Pair<>(balloon, turn), outsideField);
+                    balloonPosition.put(new Pair<Integer, Integer>(balloon, turn), outsideField);
                 }
                 else {
-                    balloonPosition.put(new Pair<>(balloon, turn), new Integer[]{newPosition[0], newPosition[1], newPosition[2]});
+                    balloonPosition.put(new Pair<Integer, Integer>(balloon, turn),
+                            new Integer[]{newPosition[0], newPosition[1], newPosition[2]});
                     covered[turn].or(coveredTargetsByBalloon(turn, newPosition[1], newPosition[2]));
                 }
             }
