@@ -1,6 +1,7 @@
 package final_2014;
 
 import org.javatuples.Pair;
+import org.javatuples.Triplet;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -49,7 +50,7 @@ import java.util.*;
 
 public class Main {
 
-    int maxDepth = 7;
+    int maxDepth = 3;
 
     public static void main(String[] args) throws Exception {
         new Main();
@@ -72,24 +73,21 @@ public class Main {
         nrBalloons = sc.nextInt();      // B
         nrTurns = sc.nextInt();         // T
 
-        int[] startCell = new int[2];
-        startCell[0] = sc.nextInt();
-        startCell[1] = sc.nextInt();
+        Triplet<Integer, Integer, Integer> startCell = new Triplet<Integer, Integer, Integer>(0, sc.nextInt(), sc.nextInt());
 
         // Read targets
-        targets = new int[nrTargets][2];
+        targets = new ArrayList<Pair<Integer, Integer>>(nrTargets);
         for (int i = 0; i < nrTargets; i++) {
-            targets[i][0] = sc.nextInt();
-            targets[i][1] = sc.nextInt();
+            targets.add(i, new Pair<Integer, Integer>(sc.nextInt(), sc.nextInt()));
         }
 
         // Read windvectors
-        windVectors = new int[nrAltitudes+1][nrRows][nrColumns][2];
+        windVectors = new HashMap<Triplet<Integer, Integer, Integer>, Pair<Integer, Integer>>();
         for (int i = 1; i <= nrAltitudes; i++) {
             for (int j = 0; j < nrRows; j++) {
                 for (int k = 0; k < nrColumns; k++) {
-                    windVectors[i][j][k][0] = sc.nextInt();
-                    windVectors[i][j][k][1] = sc.nextInt();
+                    windVectors.put(new Triplet<Integer, Integer, Integer>(i, j, k),
+                            new Pair<Integer, Integer>(sc.nextInt(), sc.nextInt()));
                 }
             }
         }
@@ -97,9 +95,9 @@ public class Main {
         solution = new int[nrTurns][nrBalloons];
 
         // Add startCell to balloon positions at turn -1
-        balloonPosition = new HashMap<Pair<Integer, Integer>, Integer[]>();
+        balloonPosition = new HashMap<Pair<Integer, Integer>, Triplet<Integer, Integer, Integer>>();
         for (int i = 0; i < nrBalloons; i++) {
-            balloonPosition.put(new Pair<Integer, Integer>(i, -1), new Integer[]{0, startCell[0], startCell[1]});
+            balloonPosition.put(new Pair<Integer, Integer>(i, -1), startCell);
         }
 
         // Create an bitset with nrTargets zeroes for every turn
@@ -107,6 +105,8 @@ public class Main {
         for (int i = 0; i < nrTurns; i++) {
             covered[i] = new BitSet(nrTargets);
         }
+
+        memoPosition = new HashMap<Triplet<Integer, Integer, Integer>, Triplet<Integer, Integer, Integer>>();
 
         long startTime = System.currentTimeMillis();
 
@@ -146,13 +146,15 @@ public class Main {
     int nrBalloons;      // B
     int nrTurns;         // T
 
-    int[][] targets;    // [nrTargets][2]
+    List<Pair<Integer, Integer>> targets;    // [nrTargets][2]
     int[][] solution;   // [Turn][Balloon] -> -1, 0, +1
-    int[][][][] windVectors;    // [Altitude][Row][Column][2] -> a, b
-    Map<Pair<Integer, Integer>, Integer[]> balloonPosition; // [Balloon, Turn] : [Altitude, Row, Column]
+    Map<Triplet<Integer, Integer, Integer>, Pair<Integer, Integer>> windVectors;    // [Altitude][Row][Column][2] -> a, b
+    Map<Pair<Integer, Integer>, Triplet<Integer, Integer, Integer>> balloonPosition; // [Balloon, Turn] : [Altitude, Row, Column]
     BitSet[] covered;   // [nrTurns], length nrTargets
 
-    Integer[] outsideField = new Integer[]{-1, -1, -1};
+    Map<Triplet<Integer, Integer, Integer>, Triplet<Integer, Integer, Integer>> memoPosition;
+
+    Triplet<Integer, Integer, Integer> outsideField = new Triplet<Integer, Integer, Integer>(-1, -1, -1);
 
 
     // =================================================================================================================
@@ -162,8 +164,8 @@ public class Main {
     private void getResult() {
 
         int score_min1, score_0, score_plus1;
-        Integer[] position;
-        int[] newPosition;
+        Triplet<Integer, Integer, Integer> position;
+        Triplet<Integer, Integer, Integer> newPosition;
         boolean liftOff;
 
         for (int balloon = 0; balloon < nrBalloons; balloon++) {
@@ -174,50 +176,47 @@ public class Main {
 
                 position = balloonPosition.get(new Pair<Integer, Integer>(balloon, turn-1));
 
-                if (Arrays.equals(position, outsideField)) {
+                if (position.equals(outsideField)) {
                     balloonPosition.put(new Pair<Integer, Integer>(balloon, turn), outsideField);
                     solution[turn][balloon] = 0;
                     continue;
                 }
 
                 // -1
-                newPosition = nextPosition(position[0] - 1, position[1], position[2]);
+                newPosition = nextPosition(position.setAt0(position.getValue0() - 1));
                 if (newPosition == null)
                     score_min1 = Integer.MIN_VALUE;
                 else
-                    score_min1 = dfs(turn, newPosition[0], newPosition[1], newPosition[2], liftOff, 0);
+                    score_min1 = dfs(turn, newPosition, liftOff, 0);
 
                 // 0
-                newPosition = nextPosition(position[0], position[1], position[2]);
+                newPosition = nextPosition(position);
                 if (newPosition == null)
                     score_0 = Integer.MIN_VALUE;
                 else
-                    score_0 = dfs(turn, newPosition[0], newPosition[1], newPosition[2], liftOff, 0);
+                    score_0 = dfs(turn, newPosition, liftOff, 0);
 
                 // +1
-                newPosition = nextPosition(position[0] + 1, position[1], position[2]);
+                newPosition = nextPosition(position.setAt0(position.getValue0() + 1));
                 if (newPosition == null)
                     score_plus1 = Integer.MIN_VALUE;
                 else
-                    score_plus1 = dfs(turn, newPosition[0], newPosition[1], newPosition[2], liftOff, 0);
+                    score_plus1 = dfs(turn, newPosition, liftOff, 0);
 
                 // Pick the one with the highest score
-                // Preference for 0
-                // TODO idea:
-                // preference for 1 => get to a higher layer faster => larger windvector =>
-                // move to another location faster
-                if (score_min1 > score_0 && score_min1 > score_plus1 && position[0] > 1) {
+                // Preference for 1
+                if (score_min1 > score_0 && score_min1 > score_plus1 && position.getValue0() > 1) {
                     solution[turn][balloon] = -1;
-                    newPosition = nextPosition(position[0] - 1, position[1], position[2]);
+                    newPosition = nextPosition(position.setAt0(position.getValue0() - 1));
                 }
-                else if (score_plus1 >= score_0 && score_plus1 >= score_min1 && position[0] < nrAltitudes-1) {
+                else if (score_plus1 >= score_0 && score_plus1 >= score_min1 && position.getValue0() < nrAltitudes-1) {
                     solution[turn][balloon] = 1;
-                    newPosition = nextPosition(position[0] + 1, position[1], position[2]);
+                    newPosition = nextPosition(position.setAt0(position.getValue0() + 1));
                 }
                 else { // TODO: als niet stijgen
                     solution[turn][balloon] = 0;
                     liftOff = true;
-                    newPosition = nextPosition(position[0], position[1], position[2]);
+                    newPosition = nextPosition(position);
                 }
 
                 // Set the balloon position
@@ -225,52 +224,51 @@ public class Main {
                     balloonPosition.put(new Pair<Integer, Integer>(balloon, turn), outsideField);
                 }
                 else {
-                    balloonPosition.put(new Pair<Integer, Integer>(balloon, turn),
-                            new Integer[]{newPosition[0], newPosition[1], newPosition[2]});
-                    covered[turn].or(coveredTargetsByBalloon(turn, newPosition[1], newPosition[2]));
+                    balloonPosition.put(new Pair<Integer, Integer>(balloon, turn), newPosition);
+                    covered[turn].or(coveredTargetsByBalloon(turn, newPosition));
                 }
             }
         }
 
     }
 
-    private int dfs(int turn, int altBalloon, int rowBalloon, int colBalloon, boolean liftOff, int depth) {
+    private int dfs(int turn, Triplet<Integer, Integer, Integer> position, boolean liftOff, int depth) {
 
-        if (altBalloon < 0 || (altBalloon == 0 && liftOff)) {
+        if (position.getValue0() < 0 || (position.getValue0() == 0 && liftOff)) {
             return Integer.MIN_VALUE;
         }
-        if (altBalloon == 0) {
+        if (position.getValue0() == 0) {
             return 0;
         }
 
-        int score = coveredTargetsByBalloon(turn, rowBalloon, colBalloon).cardinality();
+        int score = coveredTargetsByBalloon(turn, position).cardinality();
         if (depth >= maxDepth || turn >= nrTurns-1) {
             return score;
         }
 
         int score_min1, score_0, score_plus1;
-        int[] newPosition;
+        Triplet<Integer, Integer, Integer> newPosition;
 
         // -1
-        newPosition = nextPosition(altBalloon - 1, rowBalloon, colBalloon);
+        newPosition = nextPosition(position.setAt0(position.getValue0() - 1));
         if (newPosition == null)
             score_min1 = Integer.MIN_VALUE; // TODO: score = - weight*(nrTurns - turn)
         else
-            score_min1 = dfs(turn+1, altBalloon - 1, newPosition[1], newPosition[2], liftOff, depth+1);
+            score_min1 = dfs(turn+1, newPosition, liftOff, depth+1);
 
         // 0
-        newPosition = nextPosition(altBalloon, rowBalloon, colBalloon);
+        newPosition = nextPosition(position);
         if (newPosition == null)
             score_0 = Integer.MIN_VALUE;
         else
-            score_0 = dfs(turn+1, altBalloon, newPosition[1], newPosition[2], true, depth+1);
+            score_0 = dfs(turn+1, newPosition, true, depth+1);
 
         // +1
-        newPosition = nextPosition(altBalloon + 1, rowBalloon, colBalloon);
+        newPosition = nextPosition(position.setAt0(position.getValue0() + 1));
         if (newPosition == null)
             score_plus1 = Integer.MIN_VALUE;
         else
-            score_plus1 = dfs(turn+1, altBalloon + 1, newPosition[1], newPosition[2], liftOff, depth+1);
+            score_plus1 = dfs(turn+1, newPosition, liftOff, depth+1);
 
         return score + Math.max(score_0, Math.max(score_min1, score_plus1));
     }
@@ -280,32 +278,41 @@ public class Main {
     // OTHER METHODS
     // =================================================================================================================
 
-    private int[] nextPosition(int alt, int row, int col) {
-        if (alt < 0 || alt > nrAltitudes) {
-            return null;
+    private Triplet<Integer, Integer, Integer> nextPosition(Triplet<Integer, Integer, Integer> position) {
+        if (!memoPosition.containsKey(position)) {
+            Pair<Integer, Integer> vector = windVectors.get(position);
+            Triplet<Integer, Integer, Integer> answer;
+            if (position.getValue0() < 0 || position.getValue0() > nrAltitudes) {
+                answer = null;
+            }
+            else if (position.getValue0() == 0) {
+                answer = position;
+            }
+            else if (position.getValue1() + vector.getValue0() < 0 || position.getValue1() + vector.getValue0() >= nrRows) {
+                answer = null;
+            }
+            else {
+                answer = new Triplet<Integer, Integer, Integer>(position.getValue0(), position.getValue1() + vector.getValue0(),
+                        (position.getValue2() + vector.getValue1() + nrColumns) % nrColumns);
+            }
+            memoPosition.put(position, answer);
+            return answer;
         }
-        if (alt == 0) {
-            return new int[]{alt, row, col};
-        }
-        int[] vector = windVectors[alt][row][col];
-        if (row + vector[0] < 0 || row + vector[0] >= nrRows) {
-            return null;
-        }
-        return new int[]{alt, row + vector[0], (col + vector[1] + nrColumns) % nrColumns};
+        return memoPosition.get(position);
     }
 
-    private BitSet coveredTargetsByBalloon(int turn, int rowBalloon, int colBalloon) {
+    private BitSet coveredTargetsByBalloon(int turn, Triplet<Integer, Integer, Integer> position) {
         BitSet bitset = new BitSet(nrTargets);
         for (int target = 0; target < nrTargets; target++) {
-            if (covered(rowBalloon, colBalloon, targets[target][0], targets[target][1]) && !covered[turn].get(target)) {
+            if (covered(position, targets.get(target)) && !covered[turn].get(target)) {
                 bitset.set(target);
             }
         }
         return bitset;
     }
 
-    private boolean covered(int rowBalloon, int colBalloon, int rowTarget, int colTarget) {
-        return (pow(rowBalloon-rowTarget)) + pow(columnDist(colBalloon, colTarget)) <= pow(nrRadius);
+    private boolean covered(Triplet<Integer, Integer, Integer> position, Pair<Integer, Integer> target) {
+        return (pow(position.getValue1()-target.getValue0())) + pow(columnDist(position.getValue2(), target.getValue1())) <= pow(nrRadius);
     }
 
     private int columnDist(int colBalloon, int colTarget) {
