@@ -43,6 +43,18 @@ import java.util.*;
 // 7 : 418663, 1560s
 // ========================
 
+// ========================
+// SCORES - 31/3 21u
+// maxDepth : score, time
+// 3 : 124486, 6s
+// 4 : 147227, 21s
+// 5 : 262291, 52s
+// 6 : 215373, 171s
+// 7 : 351180, 547s
+// 8 : 334605, 1685s
+// ========================
+
+
 // =====================================================================================================================
 // MAIN
 // =====================================================================================================================
@@ -63,7 +75,7 @@ public class Main {
     private void solve() throws Exception {
         System.out.println(">>> Input: ");
         Scanner sc = new Scanner(System.in);
-        BufferedWriter out = new BufferedWriter(new FileWriter("output.txt"));
+        BufferedWriter out = new BufferedWriter(new FileWriter("output_" + maxDepth + ".txt"));
 
         nrRows = sc.nextInt();          // R
         nrColumns = sc.nextInt();       // C
@@ -163,18 +175,16 @@ public class Main {
 
     private void getResult() {
 
-        int score_min1, score_0, score_plus1;
+        Pair<Integer, List<Integer>> dfs_result;
         Triplet<Integer, Integer, Integer> position;
         Triplet<Integer, Integer, Integer> newPosition;
-        boolean liftOff;
 
         for (int balloon = 0; balloon < nrBalloons; balloon++) {
             System.out.println("Balloon " + balloon);
-            liftOff = false;
 
             for (int turn = 0; turn < nrTurns; turn++) {
 
-                position = balloonPosition.get(new Pair<Integer, Integer>(balloon, turn-1));
+                position = balloonPosition.get(new Pair<Integer, Integer>(balloon, turn - 1));
 
                 if (position.equals(outsideField)) {
                     balloonPosition.put(new Pair<Integer, Integer>(balloon, turn), outsideField);
@@ -182,42 +192,11 @@ public class Main {
                     continue;
                 }
 
-                // -1
-                newPosition = nextPosition(position.setAt0(position.getValue0() - 1));
-                if (newPosition == null)
-                    score_min1 = Integer.MIN_VALUE;
-                else
-                    score_min1 = dfs(turn, newPosition, liftOff, 0);
+                dfs_result = dfs(turn, position, 0);
 
-                // 0
-                newPosition = nextPosition(position);
-                if (newPosition == null)
-                    score_0 = Integer.MIN_VALUE;
-                else
-                    score_0 = dfs(turn, newPosition, liftOff, 0);
-
-                // +1
-                newPosition = nextPosition(position.setAt0(position.getValue0() + 1));
-                if (newPosition == null)
-                    score_plus1 = Integer.MIN_VALUE;
-                else
-                    score_plus1 = dfs(turn, newPosition, liftOff, 0);
-
-                // Pick the one with the highest score
-                // Preference for 1
-                if (score_min1 > score_0 && score_min1 > score_plus1 && position.getValue0() > 1) {
-                    solution[turn][balloon] = -1;
-                    newPosition = nextPosition(position.setAt0(position.getValue0() - 1));
-                }
-                else if (score_plus1 >= score_0 && score_plus1 >= score_min1 && position.getValue0() < nrAltitudes-1) {
-                    solution[turn][balloon] = 1;
-                    newPosition = nextPosition(position.setAt0(position.getValue0() + 1));
-                }
-                else { // TODO: als niet stijgen
-                    solution[turn][balloon] = 0;
-                    liftOff = true;
-                    newPosition = nextPosition(position);
-                }
+                // TODO: mogelijk om dfs_result van de volgende 5 stappen als solution toe te voegen en 5 stappen verder te gaan
+                solution[turn][balloon] = dfs_result.getValue1().get(0);
+                newPosition = nextPosition(position.setAt0(position.getValue0() + dfs_result.getValue1().get(0)));
 
                 // Set the balloon position
                 if (newPosition == null) {
@@ -232,46 +211,94 @@ public class Main {
 
     }
 
-    private int dfs(int turn, Triplet<Integer, Integer, Integer> position, boolean liftOff, int depth) {
+    private Pair<Integer, List<Integer>> dfs(int turn, Triplet<Integer, Integer, Integer> position, int depth) {
 
-        if (position.getValue0() < 0 || (position.getValue0() == 0 && liftOff)) {
-            return Integer.MIN_VALUE;
+        int score;
+        if (turn >= nrTurns-1) {
+             score = 0;
         }
-        if (position.getValue0() == 0) {
-            return 0;
-        }
-
-        int score = coveredTargetsByBalloon(turn, position).cardinality();
-        if (depth >= maxDepth || turn >= nrTurns-1) {
-            return score;
+        else {
+            score = coveredTargetsByBalloon(turn, position).cardinality();
         }
 
-        int score_min1, score_0, score_plus1;
+        if (depth >= maxDepth || turn >= nrTurns) {
+            return new Pair<Integer, List<Integer>>(score, new ArrayList<Integer>());
+        }
+
+        Pair<Integer, List<Integer>> score_min1, score_0, score_plus1;
         Triplet<Integer, Integer, Integer> newPosition;
 
         // -1
         newPosition = nextPosition(position.setAt0(position.getValue0() - 1));
-        if (newPosition == null)
-            score_min1 = Integer.MIN_VALUE; // TODO: score = - weight*(nrTurns - turn)
-        else
-            score_min1 = dfs(turn+1, newPosition, liftOff, depth+1);
+        if (newPosition == null) {
+            List<Integer> list = new ArrayList<Integer>();
+            list.add(-1);
+            // TODO: score = - weight*(nrTurns - turn)
+            score_min1 = new Pair<Integer, List<Integer>>(Integer.MIN_VALUE, list);
+        }
+        else {
+            score_min1 = dfs(turn + 1, newPosition, depth + 1);
+            score_min1.getValue1().add(0, -1);
+        }
 
         // 0
         newPosition = nextPosition(position);
-        if (newPosition == null)
-            score_0 = Integer.MIN_VALUE;
-        else
-            score_0 = dfs(turn+1, newPosition, true, depth+1);
+        if (newPosition == null){
+            List<Integer> list = new ArrayList<Integer>();
+            list.add(0);
+            score_0 = new Pair<Integer, List<Integer>>(Integer.MIN_VALUE, list);
+        }
+        else {
+            score_0 = dfs(turn + 1, newPosition, depth + 1);
+            score_0.getValue1().add(0, 0);
+        }
 
         // +1
         newPosition = nextPosition(position.setAt0(position.getValue0() + 1));
-        if (newPosition == null)
-            score_plus1 = Integer.MIN_VALUE;
-        else
-            score_plus1 = dfs(turn+1, newPosition, liftOff, depth+1);
+        if (newPosition == null){
+            List<Integer> list = new ArrayList<Integer>();
+            list.add(1);
+            score_plus1 = new Pair<Integer, List<Integer>>(Integer.MIN_VALUE, list);
+        }
+        else {
+            score_plus1 = dfs(turn + 1, newPosition, depth + 1);
+            score_plus1.getValue1().add(0, 1);
+        }
 
-        return score + Math.max(score_0, Math.max(score_min1, score_plus1));
+        // Choose -1, 0 or +1
+        ArrayList<Pair<Integer, List<Integer>>> list = new ArrayList<>(Arrays.asList(score_plus1, score_0, score_min1));
+        Collections.sort(list, dfsComparator);
+        Collections.reverse(list);
+
+        Pair<Integer, List<Integer>> result = list.remove(0);
+        // 1 is an invalid choice if you are at an altitude >= nrAltitudes-1
+        if (result.getValue1().get(0) == 1 && position.getValue0() >= nrAltitudes-1) {
+            result = list.remove(0);
+        }
+        // -1 is an invalid choice if you ar at an altitude <= 1
+        if (result.getValue1().get(0) == -1 && position.getValue0() <= 1) {
+            result = list.remove(0);
+        }
+
+        return result.setAt0(result.getValue0() + score);
     }
+
+    private static Comparator<Pair<Integer, List<Integer>>> dfsComparator = new Comparator<Pair<Integer, List<Integer>>>() {
+        @Override
+        public int compare(Pair<Integer, List<Integer>> o1, Pair<Integer, List<Integer>> o2) {
+            if (o1.getValue0().equals(o2.getValue0())) {
+                int i = 0;
+                while (i < o1.getValue1().size() && i < o2.getValue1().size()) {
+                    if (!o1.getValue1().get(i).equals(o2.getValue1().get(i))) {
+                        return o1.getValue1().get(i).compareTo(o2.getValue1().get(i));
+                    }
+                    i++;
+                }
+                return 0;
+            }
+            return o1.getValue0().compareTo(o2.getValue0());
+        }
+    };
 
 
     // =================================================================================================================
@@ -303,6 +330,9 @@ public class Main {
 
     private BitSet coveredTargetsByBalloon(int turn, Triplet<Integer, Integer, Integer> position) {
         BitSet bitset = new BitSet(nrTargets);
+        if (position.getValue0() == 0) {
+            return bitset;
+        }
         for (int target = 0; target < nrTargets; target++) {
             if (covered(position, targets.get(target)) && !covered[turn].get(target)) {
                 bitset.set(target);
@@ -312,6 +342,9 @@ public class Main {
     }
 
     private boolean covered(Triplet<Integer, Integer, Integer> position, Pair<Integer, Integer> target) {
+        if (position.getValue0() == 0) {
+            return false;
+        }
         return (pow(position.getValue1()-target.getValue0())) + pow(columnDist(position.getValue2(), target.getValue1())) <= pow(nrRadius);
     }
 

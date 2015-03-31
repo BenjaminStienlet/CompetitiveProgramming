@@ -41,3 +41,4 @@ nosetests.xml
 *.pdf
 *.data
 JavaGCJ/out/
+output*.txt
