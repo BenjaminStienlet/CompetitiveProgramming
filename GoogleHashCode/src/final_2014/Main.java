@@ -1,6 +1,7 @@
 package final_2014;
 
 import org.javatuples.Pair;
+import org.javatuples.Triplet;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -33,6 +34,17 @@ import java.util.*;
 // ========================
 
 
+
+// ========================
+// SCORES - 30/3 23u
+// maxDepth : score, time
+// 3 : 201369, 1s
+// 4 : 167155, 45s
+// 5 : 116197, 130s
+// 6 : 434405, 389s
+// 7 : 75115, 1152s
+// ========================
+
 // =====================================================================================================================
 // MAIN
 // =====================================================================================================================
@@ -40,7 +52,7 @@ import java.util.*;
 
 public class Main {
 
-    int maxDepth = 7;
+    int maxDepth = 3;
 
     public static void main(String[] args) throws Exception {
         new Main();
@@ -197,12 +209,12 @@ public class Main {
                 // TODO idea:
                 // preference for 1 => get to a higher layer faster => larger windvector =>
                 // move to another location faster
-                if (score_0 >= score_min1 && score_0 >= score_plus1) {
+                if (score_0 > score_min1 && score_0 > score_plus1) {
                     solution[turn][balloon] = 0;
                     liftOff = true;
                     newPosition = nextPosition(position[0], position[1], position[2]);
                 }
-                else if (score_min1 >= score_0 && score_min1 >= score_plus1) {
+                else if (score_min1 > score_0 && score_min1 > score_plus1) {
                     solution[turn][balloon] = -1;
                     newPosition = nextPosition(position[0] - 1, position[1], position[2]);
                 }
