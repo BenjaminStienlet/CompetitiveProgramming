@@ -6,7 +6,41 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.*;
 
+
+// =====================================================================================================================
+// RESULTS
+// =====================================================================================================================
+
+
+// ========================
+// SCORES - 30/3 23u
+// maxDepth : score, time
+// 3 : 201369, 16s
+// 4 : 167155, 45s
+// 5 : 116197, 130s
+// 6 : 434405, 389s
+// 7 : 75115, 1152s
+// ========================
+
+// ========================
+// SCORES - 31/3 11u
+// maxDepth : score, time
+// 3 : 309534, 19s
+// 4 : 328284, 49s
+// 5 : 217013, 145s
+// 6 : 434405, 516s
+// 7 : 75115, 1152s
+// ========================
+
+
+// =====================================================================================================================
+// MAIN
+// =====================================================================================================================
+
+
 public class Main {
+
+    int maxDepth = 7;
 
     public static void main(String[] args) throws Exception {
         new Main();
@@ -109,15 +143,6 @@ public class Main {
     Map<Pair<Integer, Integer>, Integer[]> balloonPosition; // [Balloon, Turn] : [Altitude, Row, Column]
     BitSet[] covered;   // [nrTurns], length nrTargets
 
-    // SCORES
-    // maxDepth : score, time
-    // 3 : 201369, 16s
-    // 4 : 167155, 45s
-    // 5 : 116197, 130s
-    // 6 : 434405, 389s
-    // 7 : 75115, 1152s
-    int maxDepth = 3;
-
     Integer[] outsideField = new Integer[]{-1, -1, -1};
 
 
@@ -168,6 +193,10 @@ public class Main {
                     score_plus1 = dfs(turn, newPosition[0], newPosition[1], newPosition[2], liftOff, 0);
 
                 // Pick the one with the highest score
+                // Preference for 0
+                // TODO idea:
+                // preference for 1 => get to a higher layer faster => larger windvector =>
+                // move to another location faster
                 if (score_0 >= score_min1 && score_0 >= score_plus1) {
                     solution[turn][balloon] = 0;
                     liftOff = true;
