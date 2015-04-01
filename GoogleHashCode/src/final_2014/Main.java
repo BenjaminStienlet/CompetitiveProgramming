@@ -52,6 +52,18 @@ import java.util.*;
 // 6 : 215373, 171s
 // 7 : 351180, 547s
 // 8 : 334605, 1685s
+// 9 : 285563, 9460s
+// 10: 231268, 25860s
+// ========================
+
+// ========================
+// SCORES - 01/4 11u
+// maxDepth : score, time
+// 3 : 180730
+// 4 : 187211
+// 5 :
+// 6 :
+// 7 :
 // ========================
 
 
@@ -62,7 +74,7 @@ import java.util.*;
 
 public class Main {
 
-    int maxDepth = 3;
+    int maxDepth = 4;
 
     public static void main(String[] args) throws Exception {
         new Main();
@@ -73,9 +85,10 @@ public class Main {
     }
 
     private void solve() throws Exception {
+
+        // BEGIN input
         System.out.println(">>> Input: ");
         Scanner sc = new Scanner(System.in);
-        BufferedWriter out = new BufferedWriter(new FileWriter("output_" + maxDepth + ".txt"));
 
         nrRows = sc.nextInt();          // R
         nrColumns = sc.nextInt();       // C
@@ -103,46 +116,60 @@ public class Main {
                 }
             }
         }
+        // END input
 
-        solution = new int[nrTurns][nrBalloons];
-
-        // Add startCell to balloon positions at turn -1
-        balloonPosition = new HashMap<Pair<Integer, Integer>, Triplet<Integer, Integer, Integer>>();
-        for (int i = 0; i < nrBalloons; i++) {
-            balloonPosition.put(new Pair<Integer, Integer>(i, -1), startCell);
-        }
-
-        // Create an bitset with nrTargets zeroes for every turn
-        covered = new BitSet[nrTurns];
-        for (int i = 0; i < nrTurns; i++) {
-            covered[i] = new BitSet(nrTargets);
-        }
-
+        int maxScore = 0, score;
         memoPosition = new HashMap<Triplet<Integer, Integer, Integer>, Triplet<Integer, Integer, Integer>>();
 
-        long startTime = System.currentTimeMillis();
+        while (true) {
+            solution = new int[nrTurns][nrBalloons];
 
-        getResult();
-
-        long endTime = System.currentTimeMillis();
-        System.out.println("That took " + (endTime - startTime) + " milliseconds");
-
-        // Create string to write solution to file
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < nrTurns; i++) {
-            for (int j = 0; j < nrBalloons; j++) {
-                builder.append(solution[i][j]);
-                builder.append(" ");
+            // Add startCell to balloon positions at turn -1
+            balloonPosition = new HashMap<Pair<Integer, Integer>, Triplet<Integer, Integer, Integer>>();
+            for (int i = 0; i < nrBalloons; i++) {
+                balloonPosition.put(new Pair<Integer, Integer>(i, -1), startCell);
             }
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append("\n");
+
+            // Create a bitset with nrTargets zeros for every turn
+            covered = new BitSet[nrTurns];
+            for (int i = 0; i < nrTurns; i++) {
+                covered[i] = new BitSet(nrTargets);
+            }
+
+            long startTime = System.currentTimeMillis();
+
+            getResult();
+
+            long endTime = System.currentTimeMillis();
+            System.out.println("That took " + (endTime - startTime) + " milliseconds");
+
+            score = score();
+            System.out.println("Score: " + score + ", maxScore: " + maxScore + "\n");
+
+            if (score > maxScore) {
+                maxScore = score;
+                System.out.println("\n=======================\nNew max score: " + score
+                        + "\n=======================\n");
+                // Create string to write solution to file
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < nrTurns; i++) {
+                    for (int j = 0; j < nrBalloons; j++) {
+                        builder.append(solution[i][j]);
+                        builder.append(" ");
+                    }
+                    builder.deleteCharAt(builder.length() - 1);
+                    builder.append("\n");
+                }
+
+                BufferedWriter out = new BufferedWriter(new FileWriter("output_" + maxDepth + ".txt"));
+                out.append(builder);
+
+                out.flush();
+                out.close();
+                sc.close();
+            }
+
         }
-
-        out.append(builder);
-
-        out.flush();
-        out.close();
-        sc.close();
     }
 
 
@@ -194,7 +221,8 @@ public class Main {
 
                 dfs_result = dfs(turn, position, 0);
 
-                // TODO: mogelijk om dfs_result van de volgende 5 stappen als solution toe te voegen en 5 stappen verder te gaan
+                // TODO: mogelijk om dfs_result van de volgende 5 stappen als solution toe te voegen
+                // en 5 stappen verder te gaan
                 solution[turn][balloon] = dfs_result.getValue1().get(0);
                 newPosition = nextPosition(position.setAt0(position.getValue0() + dfs_result.getValue1().get(0)));
 
@@ -266,19 +294,42 @@ public class Main {
         }
 
         // Choose -1, 0 or +1
-        ArrayList<Pair<Integer, List<Integer>>> list = new ArrayList<>(Arrays.asList(score_plus1, score_0, score_min1));
-        Collections.sort(list, dfsComparator);
-        Collections.reverse(list);
+        ArrayList<Pair<Integer, List<Integer>>> list = new ArrayList<Pair<Integer, List<Integer>>>(
+                Arrays.asList(score_plus1, score_0, score_min1));
+        // Collections.sort(list, dfsComparator);
+        // Collections.reverse(list);
 
-        Pair<Integer, List<Integer>> result = list.remove(0);
-        // 1 is an invalid choice if you are at an altitude >= nrAltitudes-1
-        if (result.getValue1().get(0) == 1 && position.getValue0() >= nrAltitudes-1) {
-            result = list.remove(0);
+        Pair<Integer, List<Integer>> result;
+        int max = Integer.MIN_VALUE;
+        boolean removed;
+        // Remove invalid choices and calculate maxScore
+        for (int i = 0; i < list.size(); i++) {
+            removed = false;
+            result = list.get(i);
+            // 1 is an invalid choice if you are at an altitude >= nrAltitudes-1
+            if (result.getValue1().get(0) == 1 && position.getValue0() >= nrAltitudes - 1) {
+                list.remove(i);
+                removed = true;
+            }
+            // -1 is an invalid choice if you ar at an altitude <= 1
+            if (result.getValue1().get(0) == -1 && position.getValue0() <= 1) {
+                list.remove(i);
+                removed = true;
+            }
+            if (!removed && result.getValue0() > max) {
+                max = result.getValue0();
+            }
         }
-        // -1 is an invalid choice if you ar at an altitude <= 1
-        if (result.getValue1().get(0) == -1 && position.getValue0() <= 1) {
-            result = list.remove(0);
+
+        // Remove elements that do not have the max score
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getValue0() < max) {
+                list.remove(i);
+            }
         }
+
+        // Select one of the elements that are left
+        result = list.get((int )(Math.random() * list.size()));
 
         return result.setAt0(result.getValue0() + score);
     }
@@ -354,5 +405,13 @@ public class Main {
 
     private int pow(int num) {
         return num * num;
+    }
+
+    private int score() {
+        int score = 0;
+        for (int turn = 0; turn < nrTurns; turn++) {
+            score += covered[turn].cardinality();
+        }
+        return score;
     }
 }
