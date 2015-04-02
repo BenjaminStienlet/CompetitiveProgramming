@@ -74,7 +74,7 @@ import java.util.*;
 
 public class Main {
 
-    int maxDepth = 4;
+    int maxDepth = 7;
 
     public static void main(String[] args) throws Exception {
         new Main();
@@ -120,6 +120,25 @@ public class Main {
 
         int maxScore = 0, score;
         memoPosition = new HashMap<Triplet<Integer, Integer, Integer>, Triplet<Integer, Integer, Integer>>();
+
+        memoCovered = new HashMap<Triplet<Integer, Integer, Integer>, BitSet>();
+
+        BitSet bitset;
+        Triplet<Integer, Integer, Integer> position;
+        for (int row = 0; row < nrRows; row++) {
+            for (int col = 0; col < nrColumns; col++) {
+                for (int alt = 1; alt <= nrAltitudes; alt++) {
+                    bitset = new BitSet(nrTargets);
+                    position = new Triplet<Integer, Integer, Integer>(alt, row, col);
+                    for (int target = 0; target < nrTargets; target++) {
+                        if (covered(position, targets.get(target))) {
+                            bitset.set(target);
+                        }
+                    }
+                    memoCovered.put(position, bitset);
+                }
+            }
+        }
 
         while (true) {
             solution = new int[nrTurns][nrBalloons];
@@ -192,6 +211,7 @@ public class Main {
     BitSet[] covered;   // [nrTurns], length nrTargets
 
     Map<Triplet<Integer, Integer, Integer>, Triplet<Integer, Integer, Integer>> memoPosition;
+    Map<Triplet<Integer, Integer, Integer>, BitSet> memoCovered;
 
     Triplet<Integer, Integer, Integer> outsideField = new Triplet<Integer, Integer, Integer>(-1, -1, -1);
 
@@ -296,8 +316,8 @@ public class Main {
         // Choose -1, 0 or +1
         ArrayList<Pair<Integer, List<Integer>>> list = new ArrayList<Pair<Integer, List<Integer>>>(
                 Arrays.asList(score_plus1, score_0, score_min1));
-        // Collections.sort(list, dfsComparator);
-        // Collections.reverse(list);
+        Collections.sort(list, dfsComparator);
+        Collections.reverse(list);
 
         Pair<Integer, List<Integer>> result;
         int max = Integer.MIN_VALUE;
@@ -307,14 +327,16 @@ public class Main {
             removed = false;
             result = list.get(i);
             // 1 is an invalid choice if you are at an altitude >= nrAltitudes-1
-            if (result.getValue1().get(0) == 1 && position.getValue0() >= nrAltitudes - 1) {
+            if (result.getValue1().get(0) == 1 && position.getValue0() > nrAltitudes - 1) {
                 list.remove(i);
+                i--;
                 removed = true;
             }
             // -1 is an invalid choice if you ar at an altitude <= 1
             if (result.getValue1().get(0) == -1 && position.getValue0() <= 1) {
                 list.remove(i);
                 removed = true;
+                i--;
             }
             if (!removed && result.getValue0() > max) {
                 max = result.getValue0();
@@ -325,12 +347,13 @@ public class Main {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getValue0() < max) {
                 list.remove(i);
+                i--;
             }
         }
 
         // Select one of the elements that are left
         result = list.get((int )(Math.random() * list.size()));
-
+        //result = list.get(0);
         return result.setAt0(result.getValue0() + score);
     }
 
@@ -384,10 +407,14 @@ public class Main {
         if (position.getValue0() == 0) {
             return bitset;
         }
-        for (int target = 0; target < nrTargets; target++) {
-            if (covered(position, targets.get(target)) && !covered[turn].get(target)) {
-                bitset.set(target);
+        BitSet coveredBitSet = memoCovered.get(position);
+        int i = coveredBitSet.nextSetBit(0);
+        while (i != -1) {
+//            System.out.println(coveredBitSet.nextSetBit(i));
+            if (!covered[turn].get(coveredBitSet.nextSetBit(i))) {
+                bitset.set(coveredBitSet.nextSetBit(i));
             }
+            i = coveredBitSet.nextSetBit(i+1);
         }
         return bitset;
     }
