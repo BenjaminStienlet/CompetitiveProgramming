@@ -1,4 +1,4 @@
-package template;
+package GCJ2015.round1A.problemC;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -22,7 +22,7 @@ public class Main {
         int test_cases = sc.nextInt();
 
         for (int test_case = 1; test_case <= test_cases; test_case++) {
-
+            
 
             String result = "Case #" + test_case + ": " + getResult();
             out.write(result + "\n");
