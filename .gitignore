@@ -40,5 +40,6 @@ nosetests.xml
 .idea/
 *.pdf
 *.data
-JavaGCJ/out/
 output*.txt
+*/out/
+
