@@ -52,17 +52,21 @@ public class Main {
             if (bDur[i] > Bmax) Bmax = bDur[i];
         }
 
-        BigInteger minT = BigInteger.valueOf(N-1).multiply(BigInteger.valueOf(Bmin).divide(BigInteger.valueOf(B)));
-        BigInteger maxT = BigInteger.valueOf(N-1).multiply(BigInteger.valueOf(Bmax).divide(BigInteger.valueOf(B))).add(BigInteger.ONE);
+        BigInteger minT = (BigInteger.valueOf(N-1).multiply(BigInteger.valueOf(Bmin)).divide(BigInteger.valueOf(B)));
+        BigInteger maxT = (BigInteger.valueOf(N-1).multiply(BigInteger.valueOf(Bmax)).divide(BigInteger.valueOf(B))).add(BigInteger.ONE);
         BigInteger midT;
         BigInteger two = BigInteger.valueOf(2);
+        BigInteger c;
         BigInteger bigN = BigInteger.valueOf(N);
 
         while (!minT.equals(maxT)) {
             midT = minT.add(maxT).divide(two);
             BigInteger count = BigInteger.ZERO;
             for (int i = 0; i < B; i++) {
-                count = count.add(midT.divide(BigInteger.valueOf(bDur[i])).add(BigInteger.ONE));
+                c = midT.divide(BigInteger.valueOf(bDur[i]));
+                if (midT.multiply(BigInteger.valueOf(bDur[i])).compareTo(c) < 0)
+                    c = c.add(BigInteger.ONE);
+                count = count.add(c);
             }
             if (count.compareTo(bigN) >= 0) {
                 if (maxT.equals(midT)) break;
@@ -79,7 +83,6 @@ public class Main {
 
         Map<BigInteger, BitSet> bFree = new HashMap<>();
         BigInteger client = BigInteger.ZERO;
-        BigInteger c;
         BigInteger newTime;
 
         for (int i = 0; i < B; i++) {
@@ -96,7 +99,6 @@ public class Main {
                 q.add(newTime);
             }
         }
-        System.out.println(N + " " + client);
 
         BigInteger time;
         BitSet curr;
