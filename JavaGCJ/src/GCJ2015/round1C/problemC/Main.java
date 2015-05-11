@@ -1,4 +1,4 @@
-package template;
+package GCJ2015.round1C.problemC;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -20,11 +20,18 @@ public class Main {
         BufferedWriter out = new BufferedWriter(new FileWriter("output.txt"));
 
         int test_cases = sc.nextInt();
-
+        int C, D, V;
+        int[] coins;
         for (int test_case = 1; test_case <= test_cases; test_case++) {
+            C = sc.nextInt();
+            D = sc.nextInt();
+            V = sc.nextInt();
+            coins = new int[D];
+            for (int i = 0; i < D; i++) {
+                coins[i] = sc.nextInt();
+            }
 
-
-            String result = "Case #" + test_case + ": " + getResult();
+            String result = "Case #" + test_case + ": " + getResult(C, D, V, coins);
             out.write(result + "\n");
             System.out.println(result);
         }
@@ -34,7 +41,7 @@ public class Main {
         sc.close();
     }
 
-    private String getResult() {
+    private String getResult(int C, int D, int V, int[] coins) {
         return null;
     }
 }

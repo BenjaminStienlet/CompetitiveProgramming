@@ -1,4 +1,4 @@
-package template;
+package GCJ2015.round1C.problemA;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -22,9 +22,7 @@ public class Main {
         int test_cases = sc.nextInt();
 
         for (int test_case = 1; test_case <= test_cases; test_case++) {
-
-
-            String result = "Case #" + test_case + ": " + getResult();
+            String result = "Case #" + test_case + ": " + getResult(sc.nextInt(), sc.nextInt(), sc.nextInt());
             out.write(result + "\n");
             System.out.println(result);
         }
@@ -34,7 +32,17 @@ public class Main {
         sc.close();
     }
 
-    private String getResult() {
-        return null;
+    private String getResult(int R, int C, int W) {
+        int result = C/W;
+        if (W == 2) {
+            result += 1;
+        }
+        else if (C%W == W-1) {
+            result += 2*(W-2)+1;
+        }
+        else {
+            result += W-1+(C%W);
+        }
+        return "" + result;
     }
 }
