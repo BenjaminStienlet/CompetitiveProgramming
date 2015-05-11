@@ -1,100 +1,100 @@
-Case #1: Fegla won
-Case #2: 32
-Case #3: 19
-Case #4: 12
-Case #5: 14
-Case #6: Fegla won
-Case #7: 26
-Case #8: Fegla won
-Case #9: Fegla won
-Case #10: 66
-Case #11: 41
-Case #12: 71
-Case #13: 0
-Case #14: 98
-Case #15: 55
-Case #16: 63
-Case #17: 47
-Case #18: Fegla won
-Case #19: 71
-Case #20: 15
-Case #21: 67
-Case #22: 55
-Case #23: Fegla won
-Case #24: 1
-Case #25: Fegla won
-Case #26: 4
-Case #27: 16
-Case #28: Fegla won
-Case #29: Fegla won
-Case #30: 54
-Case #31: 56
-Case #32: 71
-Case #33: 31
-Case #34: 46
-Case #35: 52
-Case #36: Fegla won
-Case #37: 28
-Case #38: 99
-Case #39: 24
-Case #40: 18
-Case #41: 17
-Case #42: 29
-Case #43: 20
-Case #44: 20
-Case #45: 27
-Case #46: Fegla won
-Case #47: 9
-Case #48: Fegla won
-Case #49: 75
-Case #50: 80
-Case #51: Fegla won
-Case #52: 0
-Case #53: Fegla won
-Case #54: 0
-Case #55: Fegla won
-Case #56: Fegla won
-Case #57: 37
-Case #58: Fegla won
-Case #59: 83
-Case #60: Fegla won
-Case #61: 59
-Case #62: Fegla won
-Case #63: Fegla won
-Case #64: 64
-Case #65: Fegla won
-Case #66: Fegla won
-Case #67: 45
-Case #68: 66
-Case #69: 43
-Case #70: 24
-Case #71: Fegla won
-Case #72: Fegla won
-Case #73: Fegla won
-Case #74: Fegla won
-Case #75: 15
-Case #76: 11
-Case #77: Fegla won
-Case #78: Fegla won
-Case #79: Fegla won
-Case #80: 13
-Case #81: 37
-Case #82: 9
-Case #83: Fegla won
-Case #84: Fegla won
-Case #85: Fegla won
-Case #86: Fegla won
-Case #87: 34
-Case #88: Fegla won
-Case #89: 31
-Case #90: 27
-Case #91: 66
-Case #92: 24
-Case #93: 46
-Case #94: 196
-Case #95: 56
-Case #96: Fegla won
-Case #97: 47
-Case #98: 0
-Case #99: 12
-Case #100: 20
+Case #1: 1
+Case #2: 7
+Case #3: 5
+Case #4: 4
+Case #5: 1
+Case #6: 7
+Case #7: 2
+Case #8: NOT POSSIBLE
+Case #9: 3
+Case #10: 6
+Case #11: 2
+Case #12: 4
+Case #13: 6
+Case #14: 2
+Case #15: 1
+Case #16: 4
+Case #17: 1
+Case #18: 4
+Case #19: 2
+Case #20: 4
+Case #21: 3
+Case #22: 7
+Case #23: 5
+Case #24: 4
+Case #25: 6
+Case #26: 2
+Case #27: 6
+Case #28: 3
+Case #29: 1
+Case #30: 4
+Case #31: 1
+Case #32: 2
+Case #33: 1
+Case #34: 3
+Case #35: NOT POSSIBLE
+Case #36: 4
+Case #37: NOT POSSIBLE
+Case #38: 4
+Case #39: 2
+Case #40: NOT POSSIBLE
+Case #41: 6
+Case #42: 3
+Case #43: 6
+Case #44: 3
+Case #45: 2
+Case #46: 1
+Case #47: 6
+Case #48: 7
+Case #49: NOT POSSIBLE
+Case #50: 7
+Case #51: 3
+Case #52: NOT POSSIBLE
+Case #53: NOT POSSIBLE
+Case #54: NOT POSSIBLE
+Case #55: 4
+Case #56: 5
+Case #57: NOT POSSIBLE
+Case #58: NOT POSSIBLE
+Case #59: 5
+Case #60: 2
+Case #61: 6
+Case #62: NOT POSSIBLE
+Case #63: 2
+Case #64: 7
+Case #65: 1
+Case #66: NOT POSSIBLE
+Case #67: 6
+Case #68: 4
+Case #69: 1
+Case #70: NOT POSSIBLE
+Case #71: 0
+Case #72: NOT POSSIBLE
+Case #73: 2
+Case #74: NOT POSSIBLE
+Case #75: 1
+Case #76: 4
+Case #77: 5
+Case #78: NOT POSSIBLE
+Case #79: 0
+Case #80: NOT POSSIBLE
+Case #81: 2
+Case #82: 3
+Case #83: 6
+Case #84: 7
+Case #85: NOT POSSIBLE
+Case #86: 3
+Case #87: 6
+Case #88: 4
+Case #89: NOT POSSIBLE
+Case #90: 5
+Case #91: 5
+Case #92: 1
+Case #93: 4
+Case #94: 7
+Case #95: 3
+Case #96: 1
+Case #97: 5
+Case #98: 3
+Case #99: NOT POSSIBLE
+Case #100: 1

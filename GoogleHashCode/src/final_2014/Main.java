@@ -57,13 +57,16 @@ import java.util.*;
 // ========================
 
 // ========================
-// SCORES - 01/4 11u
+// SCORES - 02/4 21u
 // maxDepth : score, time
-// 3 : 180730
-// 4 : 187211
+// 3 :
+// 4 :
 // 5 :
 // 6 :
 // 7 :
+// 8 :
+// 9 :
+// 10:
 // ========================
 
 
@@ -74,7 +77,8 @@ import java.util.*;
 
 public class Main {
 
-    int maxDepth = 7;
+    int maxDepth = 10;
+    int skipDepth = 5;
 
     public static void main(String[] args) throws Exception {
         new Main();
@@ -222,37 +226,38 @@ public class Main {
 
     private void getResult() {
 
-        Pair<Integer, List<Integer>> dfs_result;
+        Pair<Integer, List<Integer>> dfs_result = null;
         Triplet<Integer, Integer, Integer> position;
         Triplet<Integer, Integer, Integer> newPosition;
 
         for (int balloon = 0; balloon < nrBalloons; balloon++) {
             System.out.println("Balloon " + balloon);
 
-            for (int turn = 0; turn < nrTurns; turn++) {
-
+            for (int turn = 0; turn < nrTurns; turn+=skipDepth) {
                 position = balloonPosition.get(new Pair<Integer, Integer>(balloon, turn - 1));
 
-                if (position.equals(outsideField)) {
-                    balloonPosition.put(new Pair<Integer, Integer>(balloon, turn), outsideField);
-                    solution[turn][balloon] = 0;
-                    continue;
+                if (!position.equals(outsideField)) {
+                    dfs_result = dfs(turn, position, 0);
                 }
 
-                dfs_result = dfs(turn, position, 0);
+                newPosition = position;
+                int choice;
+                for (int i = 0; i < skipDepth && turn+i < nrTurns; i ++) {
+                    if (newPosition.equals(outsideField)) {
+                        choice = 0;
+                    } else {
+                        choice = dfs_result.getValue1().get(i);
+                        newPosition = nextPosition(newPosition.setAt0(position.getValue0() + choice));
+                    }
+                    solution[turn+i][balloon] = choice;
 
-                // TODO: mogelijk om dfs_result van de volgende 5 stappen als solution toe te voegen
-                // en 5 stappen verder te gaan
-                solution[turn][balloon] = dfs_result.getValue1().get(0);
-                newPosition = nextPosition(position.setAt0(position.getValue0() + dfs_result.getValue1().get(0)));
-
-                // Set the balloon position
-                if (newPosition == null) {
-                    balloonPosition.put(new Pair<Integer, Integer>(balloon, turn), outsideField);
-                }
-                else {
-                    balloonPosition.put(new Pair<Integer, Integer>(balloon, turn), newPosition);
-                    covered[turn].or(coveredTargetsByBalloon(turn, newPosition));
+                    if (newPosition == null) {
+                        newPosition = outsideField;
+                    }
+                    if (!newPosition.equals(outsideField)) {
+                        covered[turn+i].or(coveredTargetsByBalloon(turn+i, newPosition));
+                    }
+                    balloonPosition.put(new Pair<Integer, Integer>(balloon, turn+i), newPosition);
                 }
             }
         }
@@ -316,8 +321,8 @@ public class Main {
         // Choose -1, 0 or +1
         ArrayList<Pair<Integer, List<Integer>>> list = new ArrayList<Pair<Integer, List<Integer>>>(
                 Arrays.asList(score_plus1, score_0, score_min1));
-        Collections.sort(list, dfsComparator);
-        Collections.reverse(list);
+//        Collections.sort(list, dfsComparator);
+//        Collections.reverse(list);
 
         Pair<Integer, List<Integer>> result;
         int max = Integer.MIN_VALUE;
@@ -353,7 +358,7 @@ public class Main {
 
         // Select one of the elements that are left
         result = list.get((int )(Math.random() * list.size()));
-        //result = list.get(0);
+
         return result.setAt0(result.getValue0() + score);
     }
 
