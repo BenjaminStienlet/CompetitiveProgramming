@@ -9,7 +9,8 @@ class Solution4 {
         System.out.println("Tact Coab: \t" + isPermutationOfPalindrome("Tact Coab"));
     }
 
-    boolean isPermutationOfPalindrome(String s) {
+    // Check whether a string is a permutation of a palindrome
+    private boolean isPermutationOfPalindrome(String s) {
         s = s.toLowerCase();
 
         // only a-z -> 26 bits needed
@@ -26,7 +27,7 @@ class Solution4 {
     }
 
     // return 0 for a, ..., 25 for z and -1 for other characters
-    int getNumericValue(char c) {
+    private int getNumericValue(char c) {
         int a = Character.getNumericValue('a');
         int z = Character.getNumericValue('z');
 
@@ -38,7 +39,7 @@ class Solution4 {
     }
 
     // flip the bit at index i in the bitmap
-    int flip(int bitmap, int i) {
+    private int flip(int bitmap, int i) {
         int mask = (1 << i);
         if ((bitmap & mask) == 0) {
             bitmap |= mask;
