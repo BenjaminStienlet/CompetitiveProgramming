@@ -9,6 +9,7 @@ class Solution3 {
         System.out.println("Result: " + str);
     }
 
+    // Replaces all spaces in a string with '%20'
     public char[] urlify(char[] str, int length) {
         int trailingSpaces = str.length - length;
         int nrSpaces = countOccurrences(str, ' ') - trailingSpaces;
@@ -31,9 +32,10 @@ class Solution3 {
         return str;
     }
 
-    public int countOccurrences(char[] list, char searchEl) {
+    // Counts the number of occurrences of the given character in the given array
+    public int countOccurrences(char[] array, char searchEl) {
         int count = 0;
-        for (char el : list) {
+        for (char el : array) {
             if (el == searchEl) {
                 count++;
             }
