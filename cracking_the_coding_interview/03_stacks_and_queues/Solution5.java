@@ -26,7 +26,7 @@ class Solution5 {
             while(!sortedStack.isEmpty() && 
                 sortedStack.peek().compareTo(current) < 0) {
                 stack.push(sortedStack.pop());
-            count++;
+                count++;
             }
             sortedStack.push(current);
             while(count > 0) {
