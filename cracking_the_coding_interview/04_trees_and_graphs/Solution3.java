@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Queue;
 
 public class Solution3 {
     
@@ -34,15 +33,13 @@ public class Solution3 {
         if (root == null) {
             return result;
         }
-        Queue<TreeNode<T>> queue = new LinkedList<>();
+        LinkedList<TreeNode<T>> queue = new LinkedList<>();
         queue.add(root);
 
         while(!queue.isEmpty()) {
-            Queue<TreeNode<T>> nextQueue = new LinkedList<>();
-            LinkedList<TreeNode<T>> list = new LinkedList<>();
-            while(!queue.isEmpty()) {
-                TreeNode<T> node = queue.remove();
-                list.add(node);
+            result.add(queue);
+            LinkedList<TreeNode<T>> nextQueue = new LinkedList<>();
+            for (TreeNode<T> node : queue) {
                 if (node.leftChild != null) {
                     nextQueue.add(node.leftChild);
                 }
@@ -51,7 +48,6 @@ public class Solution3 {
                 }
             }
             queue = nextQueue;
-            result.add(list);
         }
         return result;
     }
