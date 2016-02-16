@@ -66,19 +66,19 @@ public class Solution2 {
         while (backtrack[r][c] != null) {
             CoordinatePair pair = backtrack[r][c];
             path.add(pair);
-            r = pair.x;
-            c = pair.y;
+            r = pair.r;
+            c = pair.c;
         }
         return path;
     }
 
     private class CoordinatePair {
-        public int x;
-        public int y;
+        public int r;
+        public int c;
 
-        public CoordinatePair(int x, int y) {
-            this.x = x;
-            this.y = y;
+        public CoordinatePair(int r, int c) {
+            this.r = r;
+            this.c = c;
         }
     }
 }
